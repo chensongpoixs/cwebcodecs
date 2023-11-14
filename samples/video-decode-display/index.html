@@ -88,7 +88,7 @@
     // Worker setup.
     function start() {
       const videoCodec = document.querySelector("input[name=\"video_codec\"]:checked").value;
-      const dataUri = `../data/bbb_video_${videoCodec}_frag.mp4`;
+      const dataUri = `../data/input.mp4`;
       const rendererName = document.querySelector("input[name=\"renderer\"]:checked").value;
       const canvas = document.querySelector("canvas").transferControlToOffscreen();
       const worker = new Worker("./worker.js");

@@ -1,0 +1,121 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video HDR Effect</title>
+</head>
+<body>
+  <video id="video" width="640" height="360" controls>
+    <source src="data/input.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <canvas id="canvas" width="640" height="360"></canvas>
+
+  <script>
+    // 获取视频元素和Canvas元素
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // 监听视频加载完成事件
+    video.addEventListener('loadeddata', () => {
+      // 设置Canvas的宽高与视频一致
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+
+      // 播放视频
+      video.play();
+      processVideo();
+    });
+
+    function processVideo() {
+      // 创建一个用于绘制视频帧的定时器
+      requestAnimationFrame(processVideo);
+
+      // 将当前视频帧绘制到Canvas上
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // 获取Canvas中的图像数据
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      //// 应用HDR效果（这是一个简单的示例，实际应用中可能需要更复杂的调整）
+      for (let i = 0; i < data.length; i += 4) {
+        // Gamma校正，可以根据需要调整指数
+        data[i] = Math.pow(data[i] / 255, 2.2) * 255;
+        data[i + 1] = Math.pow(data[i + 1] / 255, 2.2) * 255;
+        data[i + 2] = Math.pow(data[i + 2] / 255, 2.2) * 255;
+	  
+        // 进行Tone Mapping
+        data[i] = data[i] / (data[i] + 1) * 255;
+        data[i + 1] = data[i + 1] / (data[i + 1] + 1) * 255;
+        data[i + 2] = data[i + 2] / (data[i + 2] + 1) * 255;
+      }
+
+      // 将处理后的图像数据放回Canvas
+      ctx.putImageData(imageData, 0, 0);
+    }
+  </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebRTC HDR Effect</title>
+</head>
+<body>
+  <video id="video" width="640" height="360" autoplay playsinline></video>
+  <canvas id="canvas" width="1920" height="1080"></canvas>
+
+  <script>
+    // 获取video和canvas元素
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // 初始化WebRTC
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then((stream) => {
+        video.srcObject = stream;
+        video.play();
+        processVideo();
+      })
+      .catch((error) => {
+        console.error('Error accessing webcam:', error);
+      });
+
+    function processVideo() {
+      // 创建一个用于绘制视频帧的定时器
+      requestAnimationFrame(processVideo);
+
+      // 将当前视频帧绘制到Canvas上
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      // 获取Canvas中的图像数据
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      // 应用HDR效果（这是一个简单的示例，实际应用中可能需要更复杂的调整）
+      for (let i = 0; i < data.length; i += 4) {
+        // Gamma校正，可以根据需要调整指数
+        data[i] = Math.pow(data[i] / 255, 1.2) * 255;
+        data[i + 1] = Math.pow(data[i + 1] / 255, 1.2) * 255;
+        data[i + 2] = Math.pow(data[i + 2] / 255, 1.2) * 255;
+
+        // 进行Tone Mapping
+       // data[i] = (data[i] * 0.7) / (data[i]  )  * 255;
+       // data[i + 1] = (data[i + 1] * 0.7) / (data[i + 1]   )  * 255;
+       // data[i + 2] = (data[i + 2] * 0.7) / (data[i + 2]    )  * 255;
+      }
+
+      // 将处理后的图像数据放回Canvas
+      ctx.putImageData(imageData, 0, 0);
+    }
+  </script>
+</body>
+</html>
